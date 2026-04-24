@@ -9,8 +9,12 @@ using avr-gcc, avrdude, and Make. No Arduino libraries.
 - GNU Make
 - Windows CMD / Git Bash
 
-## Topics Covered
+## Topics Covering
 - GPIO via DDR/PORT registers
+- Timer
+- UART driver
+- I2c driver
+- SPI
 
 
 ## How to Build
