@@ -27,3 +27,14 @@ uint8_t uart_receive_byte(void){
 uint8_t uart_data_available(void){
     return (UCSR0A & (1<<RXC0)) ? 1 : 0;
 }
+
+void uart_send_number(uint16_t num) {
+    char buf[6];
+    uint8_t i = 0;
+    if(num == 0) { uart_send_byte('0'); return; }
+    while(num > 0) {
+        buf[i++] = '0' + (num % 10);
+        num /= 10;
+    }
+    while(i > 0) uart_send_byte(buf[--i]);
+}

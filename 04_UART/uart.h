@@ -8,5 +8,6 @@ void uart_send_byte(uint8_t data);
 void uart_send_string(char *str);
 uint8_t uart_receive_byte(void);
 uint8_t uart_data_available(void);
+void uart_send_number(uint16_t num);
 
 #endif
