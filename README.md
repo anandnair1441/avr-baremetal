@@ -12,7 +12,7 @@ Bare metal embedded drivers for ATmega328P in pure C. No Arduino libraries.
 
 ## Projects
 | # | Peripheral | Key Concepts | Status |
-|---|---|---|---|---|
+|---|---|---|---|
 | 01 | GPIO |  DDRx, PORTx, PINx, internal pull-up | Done |
 | 02 | Timer1 CTC | ISR, prescaler, OCR1A, volatile | Done |
 | 03 | UART | UBRR, 8N1, UDRE0, RXC0 | Done |
