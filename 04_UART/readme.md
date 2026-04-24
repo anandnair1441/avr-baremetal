@@ -6,20 +6,20 @@ A complete UART driver written in pure C for the ATmega328P microcontroller (Ard
 
 ## What This Is
 
-This project implements a UART serial communication driver from scratch by directly manipulating the ATmega328P's USART0 peripheral registers. No `Serial.h`, no `Wire.h`, no Arduino framework - just C and the datasheet.
+This project implements a UART serial communication driver from scratch by directly manipulating the ATmega328P's USART0 peripheral registers. No 'Serial.h', no 'Wire.h', no Arduino framework - just C and the datasheet.
 
 ---
 
 ## Driver API
 
-```c
+'''c
 void    uart_init(void);                  // initialise USART0 at 9600 baud, 8N1
 void    uart_send_byte(uint8_t data);     // transmit one byte
 void    uart_send_string(char *str);      // transmit null-terminated string
 void    uart_send_number(uint16_t num);   // transmit decimal number as ASCII
 uint8_t uart_receive_byte(void);          // blocking receive - waits for byte
 uint8_t uart_data_available(void);        // non-blocking check - 1 if byte waiting
-```
+'''
 
 ---
 
@@ -28,17 +28,17 @@ uint8_t uart_data_available(void);        // non-blocking check - 1 if byte wait
 The USART baud rate is controlled by a 16-bit register split across two 8-bit registers.
 
 **Formula** (Asynchronous Normal Mode, datasheet Table 20-1):
-```
+'''
 UBRR = (F_CPU / (16 × BAUD)) - 1
 UBRR = (16000000 / (16 × 9600)) - 1
 UBRR = 103
-```
+'''
 
 **Register write:**
-```c
+'''c
 UBRR0H = 0;    // high byte of 103 = 0
 UBRR0L = 103;  // low byte of 103
-```
+'''
 
 ---
 
@@ -50,9 +50,9 @@ UBRR0L = 103;  // low byte of 103
 | 3 | TXEN0 | 1 | Enable transmitter hardware |
 | others | - | 0 | Reset default, not needed |
 
-```c
+'''c
 UCSR0B = (1<<RXEN0)|(1<<TXEN0);
-```
+'''
 
 Without setting these bits the USART hardware is powered but inactive
 
@@ -70,11 +70,11 @@ Without setting these bits the USART hardware is powered but inactive
 | 6,7 | UMSEL | 0 | Asynchronous mode (reset default) |
 | 4,5 | UPM | 0 | No parity (reset default) |
 
-```c
+'''c
 UCSR0C = (1<<UCSZ01)|(1<<UCSZ00);
-```
+'''
 
-Note: reset value of UCSR0C is `0x06` (UCSZ01=1, UCSZ00=1 at power on),  This line confirms it explicitly.
+Note: reset value of UCSR0C is '0x06' (UCSZ01=1, UCSZ00=1 at power on),  This line confirms it explicitly.
 
 ---
 
@@ -84,12 +84,12 @@ The USART has a one-byte transmit buffer. Writing a new byte before the previous
 
 **UDRE0 = 1** means the transmit buffer is empty and ready for a new byte.
 
-```c
+'''c
 void uart_send_byte(uint8_t data) {
     while(!(UCSR0A & (1<<UDRE0)));  // wait until buffer empty
     UDR0 = data;                     // load byte - hardware transmits automatically
 }
-```
+'''
 
 UDRE0 is a **read-only** flag - hardware manages it. we only observe it, never write it.
 
@@ -99,12 +99,12 @@ UDRE0 is a **read-only** flag - hardware manages it. we only observe it, never w
 
 **RXC0 = 1** means a complete frame has been received and is waiting in UDR0.
 
-```c
+'''c
 uint8_t uart_receive_byte(void) {
     while(!(UCSR0A & (1<<RXC0)));  // wait until byte arrives
     return UDR0;                    // reading UDR0 clears RXC0 automatically
 }
-```
+'''
 
 Reading UDR0 automatically clears RXC0 - hardware managed, no manual flag clearing needed.
 
@@ -128,13 +128,13 @@ Reading UDR0 automatically clears RXC0 - hardware managed, no manual flag cleari
 
 **Hardware frame formatting** - USART configured for industry-standard 8N1 asynchronous serial communication.
 
-**Separation of concerns** - driver split into `.h` (interface) and `.c` (implementation) with header guards preventing double inclusion.
+**Separation of concerns** - driver split into '.h' (interface) and '.c' (implementation) with header guards preventing double inclusion.
 
 ---
 
 ## Limitations
 
-- **Blocking I/O** - `uart_send_byte` and `uart_receive_byte` spin-wait with no timeout.
+- **Blocking I/O** - 'uart_send_byte' and 'uart_receive_byte' spin-wait with no timeout.
 - **Fixed baud rate** - init hardcodes 9600.no dynamic UBRR calculation.
 - **No error handling** - UCSR0A contains Frame Error (FE0), Data OverRun (DOR0), and Parity Error (UPE0) flags. This driver does not check them.
 
