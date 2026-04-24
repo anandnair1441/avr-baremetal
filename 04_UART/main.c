@@ -5,6 +5,8 @@
 
 int main(void){
     uart_init();
+    uart_send_number(12345);
+    uart_send_string("\r\n");
     uart_send_string("hello hi how are you?\r\n");
 
     while(1){
